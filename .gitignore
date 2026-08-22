@@ -467,7 +467,7 @@ ehthumbs_vista.db
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
-
+**/appsettings.json
 # Windows Installer files
 *.cab
 *.msi
