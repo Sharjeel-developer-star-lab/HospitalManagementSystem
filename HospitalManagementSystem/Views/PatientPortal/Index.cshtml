@@ -1,0 +1,237 @@
+﻿@{
+    Layout = "~/Views/Shared/_PatientLayout.cshtml";
+    ViewData["Title"] = "My Dashboard";
+    var patient = ViewBag.Patient as HospitalManagementSystem.Models.Patient;
+}
+
+<div class="container mt-4">
+
+    <!-- Welcome Banner -->
+    <div class="rounded-3 p-4 mb-4 text-white"
+         style="background: linear-gradient(135deg, #1B3A5C, #2B6CB0);">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="fw-bold mb-1">
+                    👋 Welcome, @patient?.FirstName!
+                </h2>
+                <p class="mb-0 opacity-75">
+                    @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                </p>
+                <p class="mb-0 opacity-75">
+                    Your personal health portal
+                </p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a asp-action="BookAppointment"
+                   class="btn btn-light btn-lg fw-bold">
+                    📅 Book Appointment
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm"
+                 style="border-left: 5px solid #1B3A5C !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">Total Appointments</p>
+                            <h2 class="fw-bold text-primary mb-0">
+                                @ViewBag.TotalAppointments
+                            </h2>
+                        </div>
+                        <div style="font-size: 2.5rem;">📅</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm"
+                 style="border-left: 5px solid #28a745 !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">Upcoming</p>
+                            <h2 class="fw-bold text-success mb-0">
+                                @ViewBag.UpcomingAppointments
+                            </h2>
+                        </div>
+                        <div style="font-size: 2.5rem;">⏰</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-0 shadow-sm"
+                 style="border-left: 5px solid #6c757d !important;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">Completed</p>
+                            <h2 class="fw-bold text-secondary mb-0">
+                                @ViewBag.CompletedAppointments
+                            </h2>
+                        </div>
+                        <div style="font-size: 2.5rem;">✅</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Appointments -->
+        <div class="col-md-8 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 d-flex justify-content-between">
+                    <h5 class="mb-0 text-primary">📅 Recent Appointments</h5>
+                    <a asp-action="MyAppointments"
+                       class="btn btn-sm btn-outline-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    @{
+                        var appointments = ViewBag.RecentAppointments as
+                            List<HospitalManagementSystem.Models.Appointment>;
+                    }
+                    @if (appointments == null || !appointments.Any())
+                    {
+                        <div class="p-4 text-center text-muted">
+                            <p>No appointments yet.</p>
+                            <a asp-action="BookAppointment"
+                               class="btn btn-primary btn-sm">
+                                Book Your First Appointment
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var apt in appointments)
+                                {
+                                    <tr>
+                                        <td>
+                                            Dr. @apt.Doctor?.FirstName
+                                            @apt.Doctor?.LastName
+                                            <br />
+                                            <small class="text-muted">
+                                                @apt.Doctor?.Specialization
+                                            </small>
+                                        </td>
+                                        <td>
+                                            @apt.AppointmentDate.ToString("dd/MM/yyyy")
+                                            <br />
+                                            <small class="text-muted">
+                                                @apt.AppointmentDate.ToString("HH:mm")
+                                            </small>
+                                        </td>
+                                        <td>
+                                            @if (apt.Status == "Confirmed")
+                                            {
+                                                <span class="badge bg-success">
+                                                    ✅ Confirmed
+                                                </span>
+                                            }
+                                            else if (apt.Status == "Pending")
+                                            {
+                                                <span class="badge bg-warning">
+                                                    ⏳ Pending
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">
+                                                    ❌ Cancelled
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (apt.Status == "Pending" &&
+                                                apt.AppointmentDate > DateTime.Now)
+                                            {
+                                                <a asp-action="CancelAppointment"
+                                                   asp-route-id="@apt.Id"
+                                                   class="btn btn-danger btn-sm"
+                                                   onclick="return confirm('Cancel this appointment?')">
+                                                    Cancel
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- My Profile Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0 text-primary">👤 My Profile</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div style="width: 70px; height: 70px;
+                            background: #1B3A5C;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto;
+                            font-size: 2rem;">
+                            👤
+                        </div>
+                        <h6 class="mt-2 fw-bold">
+                            @patient?.FirstName @patient?.LastName
+                        </h6>
+                        <small class="text-muted">@patient?.Email</small>
+                    </div>
+                    <hr />
+                    <div class="small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Blood Type</span>
+                            <span class="badge bg-danger">
+                                @(string.IsNullOrEmpty(patient?.BloodType)
+                                    ? "Not set" : patient.BloodType)
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Phone</span>
+                            <span>
+                                @(string.IsNullOrEmpty(patient?.PhoneNumber)
+                                    ? "Not set" : patient.PhoneNumber)
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Gender</span>
+                            <span>
+                                @(string.IsNullOrEmpty(patient?.Gender)
+                                    ? "Not set" : patient.Gender)
+                            </span>
+                        </div>
+                    </div>
+                    <a asp-action="MyProfile"
+                       class="btn btn-outline-primary btn-sm w-100 mt-2">
+                        ✏️ Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

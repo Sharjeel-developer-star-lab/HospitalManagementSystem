@@ -1,0 +1,37 @@
+﻿@model HospitalManagementSystem.Models.Patient
+@{
+    ViewData["Title"] = "Patient Details";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">👤 @Model.FirstName @Model.LastName</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Date of Birth:</strong> @Model.DateOfBirth.ToShortDateString()</p>
+                            <p><strong>Gender:</strong> @Model.Gender</p>
+                            <p><strong>Blood Type:</strong> @Model.BloodType</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+                            <p><strong>Email:</strong> @Model.Email</p>
+                            <p><strong>Address:</strong> @Model.Address</p>
+                        </div>
+                    </div>
+                    <hr />
+                    <p><strong>Registration Date:</strong> @Model.RegistrationDate.ToShortDateString()</p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-warning">✏️ Edit</a>
+                        <a asp-action="Index" class="btn btn-secondary">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<HospitalManagementSystem.Models.Doctor>
+@{
+    ViewData["Title"] = "Doctors";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">👨‍⚕️ Doctors</h2>
+        @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+            {
+                <a asp-action="Create" class="btn btn-success">+ Add doctor</a>
+            }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No doctors added yet.</div>
+    }
+    else
+    {
+        <table class="table table-hover shadow-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th>Name</th>
+                    <th>Specialization</th>
+                    <th>Department</th>
+                    <th>Experience</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var doctor in Model)
+                {
+                    <tr>
+                        <td>Dr. @doctor.FirstName @doctor.LastName</td>
+                        <td>@doctor.Specialization</td>
+                        <td>@doctor.Department?.Name</td>
+                        <td>@doctor.YearsOfExperience years</td>
+                        <td>@doctor.Email</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@doctor.Id"
+                               class="btn btn-info btn-sm">Details</a>
+                            <a asp-action="Edit" asp-route-id="@doctor.Id"
+                               class="btn btn-warning btn-sm">Edit</a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@doctor.Id"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Delete this doctor?')">Delete</a>
+                                }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

@@ -1,0 +1,52 @@
+﻿@model HospitalManagementSystem.Models.Doctor
+@{
+    ViewData["Title"] = "Doctor Details";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">👨‍⚕️ Dr. @Model.FirstName @Model.LastName</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Specialization:</strong> @Model.Specialization</p>
+                            <p><strong>Department:</strong> @Model.Department?.Name</p>
+                            <p><strong>Experience:</strong> @Model.YearsOfExperience years</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong> @Model.Email</p>
+                            <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+                        </div>
+                    </div>
+                    <hr />
+                    <h5>Appointments</h5>
+                    @if (Model.Appointments != null && Model.Appointments.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var apt in Model.Appointments)
+                            {
+                                <li class="list-group-item">
+                                    @apt.AppointmentDate.ToShortDateString()
+                                    — @apt.Status
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No appointments yet.</p>
+                    }
+                    <div class="d-flex gap-2 mt-3">
+                        <a asp-action="Edit" asp-route-id="@Model.Id"
+                           class="btn btn-warning">✏️ Edit</a>
+                        <a asp-action="Index" class="btn btn-secondary">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

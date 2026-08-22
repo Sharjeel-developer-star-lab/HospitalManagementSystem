@@ -1,0 +1,132 @@
+﻿@model HospitalManagementSystem.Models.Appointment
+@{
+    ViewData["Title"] = "Book Appointment";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📅 Book New Appointment</h4>
+                </div>
+                <div class="card-body">
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">
+                            ❌ Error: @ViewBag.Error
+                        </div>
+                    }
+
+                    <form asp-action="Create">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Patient</label>
+                            <div class="input-group">
+                                <select asp-for="PatientId"
+                                        asp-items="ViewBag.Patients"
+                                        class="form-select">
+                                    <option value="">-- Select Patient --</option>
+                                </select>
+                                <button type="button" class="btn btn-success"
+                                        onclick="openNewTab('/Patient/Create', 'patient-btn')">
+                                    + New
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                After adding new patient click
+                                <a href="#" onclick="location.reload()">
+                                    🔄 Refresh this page
+                                </a>
+                                to see them in the list
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Doctor</label>
+                            <div class="input-group">
+                                <select asp-for="DoctorId"
+                                        asp-items="ViewBag.Doctors"
+                                        class="form-select">
+                                    <option value="">-- Select Doctor --</option>
+                                </select>
+                                <button type="button" class="btn btn-success"
+                                        onclick="openNewTab('/Doctor/Create', 'doctor-btn')">
+                                    + New
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                After adding new doctor click
+                                <a href="#" onclick="location.reload()">
+                                    🔄 Refresh this page
+                                </a>
+                                to see them in the list
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AppointmentDate"
+                                   class="form-label fw-bold">
+                                Appointment Date & Time
+                            </label>
+                            <input asp-for="AppointmentDate"
+                                   class="form-control"
+                                   type="datetime-local" />
+                            <span asp-validation-for="AppointmentDate"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status"
+                                   class="form-label fw-bold">Status</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="">-- Select Status --</option>
+                                <option value="Pending">⏳ Pending</option>
+                                <option value="Confirmed">✅ Confirmed</option>
+                                <option value="Cancelled">❌ Cancelled</option>
+                            </select>
+                            <span asp-validation-for="Status"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes"
+                                   class="form-label fw-bold">Notes</label>
+                            <textarea asp-for="Notes"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Any notes or symptoms...">
+                            </textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                💾 Book Appointment
+                            </button>
+                            <a asp-action="Index"
+                               class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openNewTab(url, btnId) {
+            // Open new tab
+            var newTab = window.open(url, '_blank');
+
+            // Check every second if the tab is closed
+            var timer = setInterval(function() {
+                if (newTab.closed) {
+                    clearInterval(timer);
+                    // Auto refresh this page when new tab closes
+                    location.reload();
+                }
+            }, 1000);
+        }
+    </script>
+}

@@ -1,0 +1,354 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HospitalMS</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HospitalManagementSystem.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background-color: #f0f4f8;
+                font-family: 'Segoe UI', sans-serif;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            .container {
+                flex: 1;
+            }
+
+            footer {
+                flex-shrink: 0;
+            }
+
+            .navbar {
+                background: linear-gradient(135deg, #1B3A5C, #2B6CB0) !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            }
+
+            .navbar-brand {
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: white !important;
+            }
+
+            .nav-link {
+                color: rgba(255,255,255,0.85) !important;
+                font-weight: 500;
+                padding: 0.5rem 1rem !important;
+                border-radius: 6px;
+                transition: all 0.2s;
+            }
+
+                .nav-link:hover {
+                    color: white !important;
+                    background: rgba(255,255,255,0.15) !important;
+                }
+
+            .card {
+                border-radius: 12px;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+                .card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+                }
+
+            .btn {
+                border-radius: 8px;
+                font-weight: 500;
+            }
+
+            .table th {
+                font-weight: 600;
+                color: #1B3A5C;
+            }
+
+            .badge {
+                border-radius: 6px;
+            }
+
+            .alert-success {
+                background: #d4edda;
+                border-left: 4px solid #28a745;
+                border-radius: 8px;
+            }
+
+            .alert-danger {
+                background: #f8d7da;
+                border-left: 4px solid #dc3545;
+                border-radius: 8px;
+            }
+
+            .form-control, .form-select {
+                border-radius: 8px;
+                border: 1px solid #dee2e6;
+                padding: 0.6rem 1rem;
+            }
+
+                .form-control:focus, .form-select:focus {
+                    border-color: #2B6CB0;
+                    box-shadow: 0 0 0 0.2rem rgba(43,108,176,0.15);
+                }
+
+            footer a:hover {
+                color: white !important;
+                text-decoration: underline !important;
+            }
+
+            .footer-diagonal {
+                width: 100%;
+                height: 80px;
+                background: #f0f4f8;
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 0);
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area=""
+                   asp-controller="Home" asp-action="Index">
+                    🏥 HospitalMS
+                </a>
+                <button class="navbar-toggler bg-light" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area=""
+                               asp-controller="Home"
+                               asp-action="Index">🏠 Home</a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area=""
+                                   asp-controller="Department"
+                                   asp-action="Index">🏥 Departments</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin") || User.IsInRole("Staff")
+                             || User.IsInRole("Viewer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area=""
+                                   asp-controller="Patient"
+                                   asp-action="Index">👤 Patients</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area=""
+                                   asp-controller="Doctor"
+                                   asp-action="Index">👨‍⚕️ Doctors</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area=""
+                                   asp-controller="Appointment"
+                                   asp-action="Index">📅 Appointments</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area=""
+                                   asp-controller="UserManagement"
+                                   asp-action="Index">👑 Users</a>
+                            </li>
+                        }
+                    </ul>
+                    <!-- ✅ Login/Logout Buttons -->
+                    <div class="d-flex align-items-center ms-3">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-light dropdown-toggle"
+                                        type="button" data-bs-toggle="dropdown">
+                                    👋 @User.Identity.Name
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="Settings"
+                                           asp-action="Index">
+                                            ⚙️ Settings
+                                        </a>
+                                    </li>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-controller="UserManagement"
+                                               asp-action="Index">
+                                                👑 Manage Users
+                                            </a>
+                                        </li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger"
+                                           asp-controller="Account"
+                                           asp-action="Logout">
+                                            🚪 Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account"
+                               asp-action="Login"
+                               class="btn btn-sm btn-outline-light me-2">
+                                🔐 Login
+                            </a>
+                            <a asp-controller="Account"
+                               asp-action="Register"
+                               class="btn btn-sm btn-light">
+                                ✨ Register
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show"
+                 role="alert">
+                ✅ @TempData["Success"]
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+                ❌ @TempData["Error"]
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="alert"></button>
+            </div>
+        }
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer style="background: #1B3A5C; margin-top: 0;">
+
+        <div class="footer-diagonal"></div>
+
+        <div class="container-fluid px-5 py-4">
+            <div class="row text-white">
+
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <span style="font-size: 2rem;">🏥</span>
+                        <span class="ms-2 fw-bold fs-3">HospitalMS</span>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.5);
+                        font-size: 0.8rem;
+                        max-width: 220px;
+                        line-height: 1.6;">
+                        Professional Hospital Management System
+                        for Dublin, Ireland.
+                    </p>
+                </div>
+
+                <div class="col-md-4 offset-md-4 text-end">
+                    <div style="font-size: 0.88rem;
+                        line-height: 2;
+                        color: rgba(255,255,255,0.8);">
+                        <div class="fw-bold">HospitalMS</div>
+                        <div>Dublin, Ireland</div>
+                        <div>
+                            <a href="tel:+353831726604"
+                               style="color: rgba(255,255,255,0.8);
+                                text-decoration: none;">
+                                Tel: +353 831726604
+                            </a>
+                        </div>
+                        <div>
+                            <a href="mailto:hospitalms.dublin@gmail.com"
+                               style="color: rgba(255,255,255,0.8);
+                                text-decoration: none;">
+                                hospitalms.dublin@gmail.com
+                            </a>
+                        </div>
+                        <div>
+                            <a href="https://github.com/Sharjeel-developer-star-lab"
+                               target="_blank"
+                               style="color: rgba(255,255,255,0.8);
+                                text-decoration: none;">
+                                github.com/Sharjeel-developer-star-lab
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.1);">
+            <div class="container-fluid px-5 py-3
+                d-flex justify-content-between align-items-center">
+                <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">
+                    © 2026 HospitalMS. All Rights Reserved.
+                </span>
+                <span style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">
+                    Built with ❤️ by
+                    <strong style="color: rgba(255,255,255,0.7);">
+                        Sharjeel Akhlaq
+                    </strong>
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var phoneInputs = document.querySelectorAll('input[id="PhoneNumber"]');
+                phoneInputs.forEach(function(input) {
+                    var iti = window.intlTelInput(input, {
+                        initialCountry: "ie",
+                        preferredCountries: ["ie", "gb", "us", "pk"],
+                        separateDialCode: true,
+                        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+                    });
+                    var form = input.closest('form');
+                    if (form) {
+                        form.addEventListener('submit', function() {
+                            input.value = iti.getNumber();
+                        });
+                    }
+                });
+            });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

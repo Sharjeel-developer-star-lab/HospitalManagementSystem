@@ -1,0 +1,114 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">👑 User Management</h2>
+        <span class="badge bg-primary fs-6">
+            Total Users: @Model.Count()
+        </span>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">✅ @TempData["Success"]</div>
+    }
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Email</th>
+                        <th>Current Role</th>
+                        <th>Change Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        var role = ((Dictionary<string, string>)ViewBag.UserRoles)[user.Id];
+                        <tr>
+                            <td>
+                                <strong>@user.Email</strong>
+                                @if (user.Email == "admin@hospitalms.com")
+                                {
+                                    <span class="badge bg-danger ms-2">System Admin</span>
+                                }
+                            </td>
+                            <td>
+                                @if (role == "Admin")
+                                {
+                                    <span class="badge bg-danger">👑 Admin</span>
+                                }
+                                else if (role == "Staff")
+                                {
+                                    <span class="badge bg-primary">👨‍💼 Staff</span>
+                                }
+                                else if (role == "Viewer")
+                                {
+                                    <span class="badge bg-secondary">👁️ Viewer</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">No Role</span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.Email != "admin@hospitalms.com")
+                                {
+                                    <form asp-action="ChangeRole" method="post"
+                                          class="d-flex gap-2">
+                                        <input type="hidden" name="userId"
+                                               value="@user.Id" />
+                                        <select name="newRole" class="form-select form-select-sm"
+                                                style="width: auto;">
+                                            <option value="Admin" selected="@(role == "Admin")">
+                                                👑 Admin
+                                            </option>
+                                            <option value="Staff" selected="@(role == "Staff")">
+                                                👨‍💼 Staff
+                                            </option>
+                                            <option value="Viewer" selected="@(role == "Viewer")">
+                                                👁️ Viewer
+                                            </option>
+                                        </select>
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            Update
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Cannot change</span>
+                                }
+                            </td>
+                            <td>
+                                @if (user.Email != "admin@hospitalms.com")
+                                {
+                                    <form asp-action="DeleteUser" method="post"
+                                          style="display:inline">
+                                        <input type="hidden" name="userId"
+                                               value="@user.Id" />
+                                        <button type="submit"
+                                                class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Delete this user?')">
+                                            🗑️ Delete
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Protected</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿@model IEnumerable<HospitalManagementSystem.Models.Department>
+@{
+    ViewData["Title"] = "Departments";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">🏥 Departments</h2>
+        @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+        {
+            <a asp-action="Create" class="btn btn-success">+ Add Department </a>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No departments found. Add one!</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var dept in Model)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">@dept.Name</h5>
+                            <p class="card-text text-muted">@dept.Description</p>
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@dept.Id"
+                                   class="btn btn-info btn-sm">Details</a>
+                                <a asp-action="Edit" asp-route-id="@dept.Id"
+                                   class="btn btn-warning btn-sm">Edit</a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@dept.Id"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Delete this patient?')">Delete</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,80 @@
+﻿@model IEnumerable<HospitalManagementSystem.Models.Appointment>
+@{
+    ViewData["Title"] = "Appointments";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">📅 Appointments</h2>
+        @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+        {
+            <a asp-action="Create" class="btn btn-success">+ Add Appointment</a>
+        }
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No appointments booked yet.</div>
+    }
+    else
+    {
+        <table class="table table-hover shadow-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var apt in Model)
+                {
+                    <tr>
+                        <td>@apt.Patient?.FirstName @apt.Patient?.LastName</td>
+                        <td>Dr. @apt.Doctor?.FirstName @apt.Doctor?.LastName</td>
+                        <td>@apt.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            @if (apt.Status == "Confirmed")
+                            {
+                                <span class="badge bg-success">Confirmed</span>
+                            }
+                            else if (apt.Status == "Pending")
+                            {
+                                <span class="badge bg-warning">Pending</span>
+                            }
+                            else if (apt.Status == "Cancelled")
+                            {
+                                <span class="badge bg-danger">Cancelled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@apt.Status</span>
+                            }
+                        </td>
+                        <td>@apt.Notes</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@apt.Id"
+                               class="btn btn-info btn-sm">Details</a>
+                            <a asp-action="Edit" asp-route-id="@apt.Id"
+                               class="btn btn-warning btn-sm">Edit</a>
+                            @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Delete" asp-route-id="@apt.Id"
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Delete this appointment?')">Delete</a>
+                                }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
